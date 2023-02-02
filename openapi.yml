@@ -1,0 +1,146 @@
+openapi: 3.0.0
+
+info:
+  title: Synpulse8 Backend Engineer Hiring Challenge
+  description: >
+    This API contains a subset of API specification for an
+    e-Banking Portal application.
+  version: v1
+
+# Define security scheme bearerAuth
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    page:
+      type: object
+      description: A page of transactions with the total debit/credit.
+      properties:
+        transactions:
+          type: array
+          description: A list of transactions.
+          items:
+            $ref: '#/components/schemas/transaction'
+        debit:
+          type: number
+          description: >
+            The total debit on this page 
+            at the current exchange rate.
+        credit:
+          type: number
+          description: >
+            The total credit on this page 
+            at the current exchange rate.
+      required:
+        - transactions
+    transaction:
+      type: object
+      description: Records the details of a transaction.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier.
+        amount:
+          type: number
+          description: Debit (positive)/ Credit (negative).
+        currency:
+          $ref: '#/components/schemas/currencySupported'
+        IBAN:
+          type: string
+          format: id
+          description: International Bank Account Number.
+        date:
+          type: string
+          format: date
+          description: Date of transaction.
+        description:
+          type: string
+          description: Optional description of the transaction.
+    currencySupported:
+      type: string
+      enum: ["USD", "GBP", "EUR", "CHF"]
+    errorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          description: Contains the stack trace, cause, and message.
+
+# Apply bearerAuth globally to all operations
+security:
+  - bearerAuth: []
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Development server.
+
+paths:
+  /transactions:
+    parameters:
+      - name: year
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: month
+        in: query
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 12
+    get:
+      summary: Get all transactions in a month.
+      description: >
+        Retrieve a paginated list of money account transactions 
+        created in an arbitrary calendar month for a logged-in 
+        customer who may have more than one accounts.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pages:
+                    type: array
+                    description: An array of pages.
+                    items:
+                      $ref: '#/components/schemas/page'
+                  num_pages:
+                    type: integer
+                    description: Number of pages in total
+                  client_id:
+                    type: string
+                    format: id
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Resource Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        "502":
+          description: "Bad Gateway"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
