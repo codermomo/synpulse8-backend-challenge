@@ -21,8 +21,6 @@ public class KafkaConsumerConfig {
     // https://stackoverflow.com/questions/64723298/kafka-consumer-receives-message-if-set-group-id-to-none-but-it-doesnt-receive
     @Value("${random.uuid}")
     private String groupId;
-//    @Value("${random.uuid}")
-//    private String groupId2;
 
     @Bean
     public Map<String, Object> consumerConfigs() {
@@ -34,17 +32,6 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return props;
     }
-
-//    @Bean
-//    public Map<String, Object> accountConsumerConfigs() {
-//        Map<String, Object> props = new HashMap<>();
-//        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-//        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-//        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-//        props.put(ConsumerConfig.GROUP_ID_CONFIG, this.groupId2);
-//        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//        return props;
-//    }
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {

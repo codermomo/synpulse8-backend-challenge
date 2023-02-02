@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -31,8 +30,6 @@ public class TransactionService {
     private ValidationService validationService;
     @Autowired
     private FXRateService fxRateService;
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
     @Autowired
     private Consumer<String, String> consumer;
 

@@ -21,7 +21,7 @@ public class PublishRecordService {
 
     private Logger logger = LoggerFactory.getLogger(PublishRecordService.class);
     @Autowired
-    private KafkaTemplate<String, String> accountKafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     public void publishAccounts(String filename) {
 
@@ -37,7 +37,7 @@ public class PublishRecordService {
                     json, new TypeReference<Map<String, ArrayList<Account>>>() {});
 
             for (var entry: clients.entrySet()) {
-                accountKafkaTemplate.send(topicName, entry.getKey(), objectMapper.writeValueAsString(entry));
+                kafkaTemplate.send(topicName, entry.getKey(), objectMapper.writeValueAsString(entry));
             }
 
             logger.info(String.format("Published account records to Kafka topic %s successfully", topicName));
@@ -62,7 +62,7 @@ public class PublishRecordService {
 
             for (var accountMonthlyTransactions: transactionTopics.entrySet()) {
                 for (var transactionEntry: accountMonthlyTransactions.getValue().entrySet()) {
-                    accountKafkaTemplate.send(
+                    kafkaTemplate.send(
                             (prefix+"|"+accountMonthlyTransactions.getKey()).replace("|", "."),
                             transactionEntry.getKey(),
                             objectMapper.writeValueAsString(transactionEntry)
