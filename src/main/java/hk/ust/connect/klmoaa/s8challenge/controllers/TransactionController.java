@@ -1,6 +1,6 @@
 package hk.ust.connect.klmoaa.s8challenge.controllers;
 
-import hk.ust.connect.klmoaa.s8challenge.models.*;
+import hk.ust.connect.klmoaa.s8challenge.models.Client;
 import hk.ust.connect.klmoaa.s8challenge.services.TokenService;
 import hk.ust.connect.klmoaa.s8challenge.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;

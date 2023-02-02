@@ -5,7 +5,6 @@ import hk.ust.connect.klmoaa.s8challenge.models.Currency;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

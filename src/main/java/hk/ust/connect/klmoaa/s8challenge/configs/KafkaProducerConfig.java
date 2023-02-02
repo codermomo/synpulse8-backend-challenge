@@ -1,8 +1,6 @@
 package hk.ust.connect.klmoaa.s8challenge.configs;
 
-import hk.ust.connect.klmoaa.s8challenge.models.Account;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
