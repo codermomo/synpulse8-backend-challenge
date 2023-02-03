@@ -12,7 +12,7 @@ Each class also contains accessors and mutators for each class member.
 
 
 ## API Endpoint
-Detailed API definitions can be found in `openapi.yml`.
+Detailed API definitions can be found in openapi.yml
 
 ### Task-related
 `GET /api/v1/transactions/get`: Return a paginated list of money account transactions 
