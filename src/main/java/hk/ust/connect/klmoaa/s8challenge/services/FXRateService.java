@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Service
 public class FXRateService {
 
-    private Logger logger = LoggerFactory.getLogger(FXRateService.class);
+    private final Logger logger = LoggerFactory.getLogger(FXRateService.class);
     private final String endpoint = "https://api.exchangerate.host/timeseries?";
     @Autowired
     private FXRateParser parser;

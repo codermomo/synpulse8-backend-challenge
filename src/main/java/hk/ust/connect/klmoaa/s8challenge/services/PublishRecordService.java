@@ -19,7 +19,7 @@ import java.util.Map;
 @Service
 public class PublishRecordService {
 
-    private Logger logger = LoggerFactory.getLogger(PublishRecordService.class);
+    private final Logger logger = LoggerFactory.getLogger(PublishRecordService.class);
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
