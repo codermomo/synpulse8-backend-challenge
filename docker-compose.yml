@@ -32,16 +32,14 @@ services:
       context: .
       target: dev
     volumes:
-      - C:\Users\Alex\Documents\Code\synpulse8-data-generation:/app/data
+      - <VOLUME_ADDRESS>:/app/data
     ports:
       - "8080:8080"
     networks:
       - kafka_network
     depends_on:
       - kafka
-    environment:
-      - SERVER_PORT=8080
-      - KAFKA_URL=kafka:9092
+
 
 networks:
   kafka_network:

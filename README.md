@@ -2,6 +2,7 @@
 
 ## Table of Contents
 
+- [Getting Started](#getting-started)
 - [Tasks and Status](#tasks-and-status)
 - [Design](#design)
 - [API Usage](#api-usage)
@@ -9,6 +10,36 @@
 - [Data](#data)
 - [Logging and Monitoring](#logging-and-monitoring)
 - [Testing](#testing-1)
+
+
+## Getting Started
+To test the application locally, please make sure that Docker Desktop is installed in the device.
+### Clone the Repository
+```
+git clone https://github.com/codermomo/synpulse8-backend-challenge.git
+```
+
+
+### Build the Docker Image
+```
+docker build .
+```
+
+
+### Replace Placeholder in docker-compose.yml
+Replace the placeholder `<VOLUME_ADDRESS>` by a local path which contains data files for 
+importing to Kafka. For the data file format, please refer to 
+[here](https://github.com/codermomo/synpulse8-backend-challenge-data-generation).
+```
+e.g. change <VOLUME_ADDRESS> into /users/codermomo/s8-data
+```
+
+
+### Run the Docker Containers
+```
+docker compose up -d
+```
+
 
 ## Tasks and Status
 ### Development
@@ -195,10 +226,18 @@ for each account one-by-one from Kafka.
 
 
 ### Data Generation
-For testing purpose, a Python script (not included) is utilized to generate account information 
-and transaction records for 10 clients. Each client contains 2 to 4 accounts in different 
-currencies. For each account, 2,000 to 4,000 transaction records are generated for each month 
-within 2013 to 2022.
+For testing purpose, 
+[a Python notebook](https://github.com/codermomo/synpulse8-backend-challenge-data-generation)
+is utilized to generate account information and transaction records for 10 clients. Each 
+client contains 2 to 4 accounts in different currencies. To ease data ingestion to Kafka, 
+for each account, only 200 to 400 transaction records are generated for each month within 
+2020 to 2022. For the data format, please refer to the above repository.
+
+Due to the efficient data schema by using Kafka topics (refer below), even if 
+the amount of data increases (e.g. number of transaction per month increases), the API 
+can still poll the records quickly. In production, to ingest more data to the Kafka broker 
+at once, additional modules should be developed using the 
+[Kafka Connect service (Source Connector)](https://docs.confluent.io/platform/current/connect/index.html#how-kafka-connect-works).
 
 
 ### Account Information
