@@ -1,5 +1,43 @@
 # Synpulse8 Hiring Challenge: Backend Engineer Hiring Challenge
 
+## Table of Contents
+
+- [Tasks and Status](#tasks-and-status)
+- [Design](#design)
+- [API Usage](#api-usage)
+- [Security](#security)
+- [Date](#data)
+- [Logging and Monitoring](#logging-and-monitoring)
+- [Testing](#testing-1)
+
+## Tasks and Status
+### Development
+- [x] Implement model classes
+- [x] Implement controllers
+- [x] Develop a data generation script
+- [x] Create a Kafka broker using docker images
+- [x] Implement a Kafka producer and consumer
+- [x] Implement a parser to parse messages into models
+- [x] Authorize users by JWT using request filters
+- [x] Query FX rates from third-party services
+
+
+### Testing
+- [ ] Design and implement unit test module
+- [ ] Design and implement integration test module
+
+Note: Due to time constraint, I didn't manage to design and develop testing modules.
+
+
+### CI/CD and Deployment
+- [x] Implement a Dockerfile for instructing the build of image
+- [x] Implement a docker-compose.yml file for defining and running services
+- [x] Implement the minimal CI/CD config file for testing the build image using CircleCI
+- [ ] Implement the configuration for deployment in Kubernetes
+
+Note: Due to time constraint, I didn't manage to set up the configuration for deployment.
+
+
 ## Design
 ### Class Diagram
 ![](./diagrams/Class%20Diagram.png)
@@ -11,20 +49,28 @@ Each class also contains accessors and mutators for each class member.
 ![](./diagrams/Sequence%20Diagram.png)
 
 
-## API Endpoint
+### Deployment Option
+In this hiring challenge, it is required to build a docker image of the REST API service 
+which will connect to a Kafka broker for polling transaction records. I set up the 
+Kafka broker using docker images that run together with the API docker image on the same 
+machine, to ease the development. However, if this microservice is used in production, 
+it might be better to separate the Kafka server and API service, meaning that we should 
+set up a dedicated cluster for Kafka brokers.
+
+## API Usage
 Detailed API definitions can be found in openapi.yml
 
-### Task-related
-`GET /api/v1/transactions/get`: Return a paginated list of money account transactions 
+### Task-related Endpoints
+1. `GET /api/v1/transactions/get`: Return a paginated list of money account transactions 
 created in an arbitrary calendar month for a given customer who is logged-on in the portal.
 
-Request Header
+#### Request Header
 
 | Parameter        | Type     | Description                                             |
 |:-----------------|:---------|:--------------------------------------------------------|
 | `Authorization` | `String` | Required, must start from `Bearer `, followed by a JWT. |
 
-Query String
+#### Query String
 
 | Parameter       | Type     | Description                                    |
 |:----------------|:---------|:-----------------------------------------------|
@@ -33,7 +79,7 @@ Query String
 | `page_size`     | `int`    | Optional, `100` by default.                    |
 | `base_currency` | `String` | Optional, `USD` by default.                    |
 
-Sample Response (JSON)
+#### Sample Response (JSON)
 ```
 {
     "pages": [
@@ -72,13 +118,15 @@ Sample Response (JSON)
 ```
 
 Note that `pages > transactions > amount` is in quoted currency, while `pages > debit` and 
-`pages > credit` is in base currency.
+`pages > credit` is in base currency. Also, for real-life uses, the API might be better to 
+sort the transaction records, filter the records based on accounts, and cache the results, 
+but these functionalities are not designed and implemented in this project.
 
 
-### Testing purpose
-`GET /api/v1/admin/token/get`: Return the JWT for the given client, expired within 10 hours.
+### Endpoints for Testing Purpose
+1. `GET /api/v1/admin/token/get`: Return the JWT for the given client, expired within 10 hours.
 
-Query String
+#### Query String
 
 | Parameter   | Type     | Description                            |
 |:------------|:---------|:---------------------------------------|
@@ -86,12 +134,35 @@ Query String
 
 Sample Response (String)
 
-`eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQLTAwMDAwMDAwMDIiLCJleHAiOjE2NzUzNzI0MzksImlhdCI6MTY3NTMzNjQ
-zOX0.htnYZ1ekZrusFxxg6gbV-xHxjX1ZFmHD8U8aO49HuTSJDVAagGnTkLqYQys316N4NEyfVSl5W6usY5zj97fKuQ`
+```
+eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQLTAwMDAwMDAwMDIiLCJleHAiOjE2NzUzNzI0MzksImlhdCI6MTY3NTMzNjQ
+zOX0.htnYZ1ekZrusFxxg6gbV-xHxjX1ZFmHD8U8aO49HuTSJDVAagGnTkLqYQys316N4NEyfVSl5W6usY5zj97fKuQ
+```
 
 
-`GET /api/v1/admin/transactions/publish`: Publish some account-related or 
-transaction-related Kafka messages, stored in local files, to some Kafka topics.
+2. `GET /api/v1/admin/transactions/publish`: Publish transaction-related 
+Kafka messages from files stored in docker volume to some Kafka topics.
+The API will lookup for the corresponding file in the volume and publish 
+the data as kafka messages.
+
+#### Query String
+
+| Parameter  | Type     | Description                                 |
+|:-----------|:---------|:--------------------------------------------|
+| `filename` | `String` | Required. For example, `transactions.json`. |
+
+
+3. `GET /api/v1/admin/transactions/publish`: Publish account-related
+Kafka messages from files stored in docker volume to a Kafka topic.
+The API will lookup for the corresponding file in the volume and publish
+the data as kafka messages.
+
+
+#### Query String
+
+| Parameter  | Type     | Description                             |
+|:-----------|:---------|:----------------------------------------|
+| `filename` | `String` | Required. For example, `accounts.json`. |
 
 
 ## Security
