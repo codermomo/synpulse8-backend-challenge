@@ -6,7 +6,7 @@
 - [Design](#design)
 - [API Usage](#api-usage)
 - [Security](#security)
-- [Date](#data)
+- [Data](#data)
 - [Logging and Monitoring](#logging-and-monitoring)
 - [Testing](#testing-1)
 
