@@ -41,7 +41,6 @@ public class KafkaConsumerConfig {
     @Bean
     public Consumer<String, String> consumer() {
         Consumer<String, String> consumer = consumerFactory().createConsumer();
-        // consumer.subscribe(Arrays.asList("transactions"));
         return consumer;
     }
 }

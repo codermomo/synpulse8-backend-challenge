@@ -1,16 +1,48 @@
 version: '3'
 
 services:
+  ### kafka ###
   zookeeper:
     image: wurstmeister/zookeeper
     container_name: zookeeper
     ports:
+      # {host port}:{container port}
       - "2181:2181"
+    networks:
+      - kafka_network
+
   kafka:
     image: wurstmeister/kafka
     container_name: kafka
+    # command: ["/bin/sh", "-c", "cd /opt/kafka_2.13-2.8.1; bin/kafka-configs.sh --bootstrap-server kafka:9092 --alter --entity-type topics --entity-name * --add-config retention.ms=-1"]
     ports:
       - "9092:9092"
+    networks:
+      - kafka_network
+    depends_on:
+      - zookeeper
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: localhost
+#      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+  ### application ###
+  s8:
+    build:
+      context: .
+      target: dev
+    volumes:
+      - C:\Users\Alex\Documents\Code\synpulse8-data-generation:/app/data
+    ports:
+      - "8080:8080"
+    networks:
+      - kafka_network
+    depends_on:
+      - kafka
+    environment:
+      - SERVER_PORT=8080
+      - KAFKA_URL=kafka:9092
+
+networks:
+  kafka_network:
+    name: kafka_docker_net

@@ -20,17 +20,17 @@ import java.util.stream.Collectors;
 @Service
 public class FXRateService {
 
-    private Logger logger = LoggerFactory.getLogger(FXRateService.class);
+    private final Logger logger = LoggerFactory.getLogger(FXRateService.class);
     private final String endpoint = "https://api.exchangerate.host/timeseries?";
     @Autowired
     private FXRateParser parser;
 
     @Bean
-    private RestTemplate restTemplate() {
+    private RestTemplate fxRateRestTemplate() {
         return new RestTemplate();
     }
 
-    private String InvokeEndpoint(
+    private String invokeEndpoint(
             LocalDate startDate, LocalDate endDate, ArrayList<Currency> currencies, Currency base) {
 
         String uri = String.format(
@@ -39,7 +39,7 @@ public class FXRateService {
                 currencies.stream().map(Objects::toString).collect(Collectors.joining(",")));
         logger.info(String.format("Trying to invoke endpoint with URL %s", uri));
 
-        String results = restTemplate().getForObject(uri, String.class);
+        String results = fxRateRestTemplate().getForObject(uri, String.class);
         logger.info(String.format("Received response from URL %s: %s", uri, results));
 
         return results;
@@ -62,7 +62,7 @@ public class FXRateService {
 
         try {
             Map<LocalDate, Map<String, FXRate>> results = parseEndpointResult(
-                    InvokeEndpoint(startDate, endDate, currencies, base), base);
+                    invokeEndpoint(startDate, endDate, currencies, base), base);
 
             // minimal null check to validate response from external api
             if (results == null ||

@@ -25,7 +25,7 @@ import java.util.Map;
 @Service
 public class TransactionService {
 
-    private Logger logger = LoggerFactory.getLogger(TransactionService.class);
+    private final Logger logger = LoggerFactory.getLogger(TransactionService.class);
     @Autowired
     private ValidationService validationService;
     @Autowired
@@ -50,9 +50,12 @@ public class TransactionService {
             ArrayList<Transaction> transactions = getByMonth(client, period.get("start"), period.get("end"));
 
             // Transform to paginated list
-            Map<LocalDate, Map<String, FXRate>> monthRates =
-                    fxRateService.queryFXRates(
-                            period.get("start"), period.get("end"), client.getAllCurrenciesUsed(), baseCurrency);
+            Map<LocalDate, Map<String, FXRate>> monthRates = new HashMap<>();
+            if (!transactions.isEmpty()) {
+                monthRates =
+                        fxRateService.queryFXRates(
+                                period.get("start"), period.get("end"), client.getAllCurrenciesUsed(), baseCurrency);
+            }
             ArrayList<Page> pages = Page.pageFactory(pageSize, transactions, monthRates);
 
             // Build response body
@@ -165,7 +168,7 @@ public class TransactionService {
         logger.info(String.format("Start polling accounts of client %s from Kafka topic %s", clientId, topicName));
 
         ArrayList<ConsumerRecord<String, String>> results = new ArrayList<>();
-        ConsumerRecords<String, String> records = null;
+        ConsumerRecords<String, String> records;
 
         do {
             // extract
@@ -191,7 +194,7 @@ public class TransactionService {
             Consumer<String, String> consumer, String prefix, Account account, LocalDate[] period) {
 
         ArrayList<Transaction> results = new ArrayList<>();
-        ArrayList<String> topicName = new ArrayList<String>();
+        ArrayList<String> topicName = new ArrayList<>();
         topicName.add(
                 String.format("%s.%s.%d.%d", prefix, account.IBAN(), period[0].getYear(), period[0].getMonthValue())
         );
@@ -201,7 +204,7 @@ public class TransactionService {
         logger.info(String.format(
                 "Start polling transactions of account %s from Kafka topic %s", account.IBAN(), topicName.get(0)));
 
-        ConsumerRecords<String, String> records = null;
+        ConsumerRecords<String, String> records;
         do {
             // extract
             records = pollOnce(consumer);
@@ -225,7 +228,6 @@ public class TransactionService {
     Poll Kafka messages from topics subscribed by consumer.
      */
     public ConsumerRecords<String, String> pollOnce(Consumer<String, String> consumer) {
-        ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-        return records;
+        return consumer.poll(Duration.ofMillis(1000));
     }
 }

@@ -34,11 +34,18 @@ public class AdminController {
     }
 
     @GetMapping("/transactions/publish")
-    public ResponseEntity<String> publishRecordsFromFile() {
-        publishRecordService.publishAccounts("C:\\Users\\Alex\\Documents\\Code\\synpulse8-data-generation\\accounts_1_5.json");
-        publishRecordService.publishAccounts("C:\\Users\\Alex\\Documents\\Code\\synpulse8-data-generation\\accounts_6_10.json");
-        publishRecordService.publishTransactions("C:\\Users\\Alex\\Documents\\Code\\synpulse8-data-generation\\transactions_1_5.json");
-        publishRecordService.publishTransactions("C:\\Users\\Alex\\Documents\\Code\\synpulse8-data-generation\\transactions_6_10.json");
-        return ResponseEntity.ok("Published to Kafka");
+    public ResponseEntity<String> publishTransactionRecordsFromFile(
+            @RequestParam(value = "filename") String filename
+    ) {
+        publishRecordService.publishTransactions(filename);
+        return ResponseEntity.ok("Published accounts to Kafka");
+    }
+
+    @GetMapping("/accounts/publish")
+    public ResponseEntity<String> publishAccountRecordsFromFile(
+            @RequestParam(value = "filename") String filename
+    ) {
+        publishRecordService.publishAccounts(filename);
+        return ResponseEntity.ok("Published transactions to Kafka");
     }
 }

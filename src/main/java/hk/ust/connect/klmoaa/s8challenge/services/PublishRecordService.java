@@ -19,7 +19,7 @@ import java.util.Map;
 @Service
 public class PublishRecordService {
 
-    private Logger logger = LoggerFactory.getLogger(PublishRecordService.class);
+    private final Logger logger = LoggerFactory.getLogger(PublishRecordService.class);
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
@@ -30,7 +30,7 @@ public class PublishRecordService {
 
         try {
             String json = Files.readString(
-                    Paths.get(filename));
+                    Paths.get(filename.replaceAll("#", "/")));
 
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, ArrayList<Account>> clients = objectMapper.readValue(
@@ -53,7 +53,7 @@ public class PublishRecordService {
 
         try {
             String json = Files.readString(
-                    Paths.get(filename));
+                    Paths.get(filename.replaceAll("#", "/")));
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
