@@ -30,7 +30,7 @@ public class PublishRecordService {
 
         try {
             String json = Files.readString(
-                    Paths.get(filename));
+                    Paths.get(filename.replaceAll("#", "/")));
 
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, ArrayList<Account>> clients = objectMapper.readValue(
@@ -53,7 +53,7 @@ public class PublishRecordService {
 
         try {
             String json = Files.readString(
-                    Paths.get(filename));
+                    Paths.get(filename.replaceAll("#", "/")));
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());

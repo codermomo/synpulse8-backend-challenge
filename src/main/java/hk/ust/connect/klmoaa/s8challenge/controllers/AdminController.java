@@ -34,9 +34,18 @@ public class AdminController {
     }
 
     @GetMapping("/transactions/publish")
-    public ResponseEntity<String> publishRecordsFromFile() {
-//        publishRecordService.publishAccounts("myaccountfile.json");
-//        publishRecordService.publishTransactions("mytransactionfile.json");
-        return ResponseEntity.ok("Published to Kafka");
+    public ResponseEntity<String> publishTransactionRecordsFromFile(
+            @RequestParam(value = "filename") String filename
+    ) {
+        publishRecordService.publishTransactions(filename);
+        return ResponseEntity.ok("Published accounts to Kafka");
+    }
+
+    @GetMapping("/accounts/publish")
+    public ResponseEntity<String> publishAccountRecordsFromFile(
+            @RequestParam(value = "filename") String filename
+    ) {
+        publishRecordService.publishAccounts(filename);
+        return ResponseEntity.ok("Published transactions to Kafka");
     }
 }

@@ -50,9 +50,12 @@ public class TransactionService {
             ArrayList<Transaction> transactions = getByMonth(client, period.get("start"), period.get("end"));
 
             // Transform to paginated list
-            Map<LocalDate, Map<String, FXRate>> monthRates =
-                    fxRateService.queryFXRates(
-                            period.get("start"), period.get("end"), client.getAllCurrenciesUsed(), baseCurrency);
+            Map<LocalDate, Map<String, FXRate>> monthRates = new HashMap<>();
+            if (!transactions.isEmpty()) {
+                monthRates =
+                        fxRateService.queryFXRates(
+                                period.get("start"), period.get("end"), client.getAllCurrenciesUsed(), baseCurrency);
+            }
             ArrayList<Page> pages = Page.pageFactory(pageSize, transactions, monthRates);
 
             // Build response body

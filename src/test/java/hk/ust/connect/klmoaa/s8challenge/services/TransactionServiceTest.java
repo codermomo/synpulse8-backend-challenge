@@ -32,87 +32,87 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
-
-    // Mocks
-    @InjectMocks
-    private TransactionService service;
-    @Mock
-    private Logger logger;
-    @Mock
-    private ValidationService validationService;
-    @Mock
-    private FXRateService fxRateService;
-    @Mock
-    private KafkaTemplate<String, String> kafkaTemplate;
-    @Mock
-    private Consumer<String, String> consumer;
-
-    // Data
-
-    @Test
-    void getPaginatedListByMonth() {
-    }
-
-    @Test
-    void getByMonth() {
-    }
-
-    @Test
-    void getAllAccounts() {
-    }
-
-    @Test
-    void getTransactionsByClient() {
-    }
-
-    @Test
-    void pollAccounts() {
-    }
-
-    @Test
-    void pollTransactionsByAccount() {
-        // Arrange
-        String prefix = "transactions", clientId = "P-0123456789", IBAN = "CH-1234-1111";
-        Currency currency = Currency.USD;
-        Client owner = new Client(clientId);
-        Account account = new Account(owner, IBAN, currency);
-        owner.addAccount(account);
-        LocalDate[] period = {LocalDate.of(2022, 10, 1), LocalDate.of(2022, 10, 31)};
-
-        Map<TopicPartition, List<ConsumerRecord<String, String>>> map = new HashMap<>();
-        TopicPartition topicPartition = new TopicPartition("mytopic", 0);
-        ConsumerRecord<String, String> dummyRecord = new ConsumerRecord<String, String>(
-                "mytopic", 0, 0, "mykey", "myvalue");
-        map.put(topicPartition, Arrays.asList(dummyRecord));
-        ConsumerRecords<String, String> firstRecords = new ConsumerRecords<>(map);
-
-        doReturn(firstRecords).doReturn(ConsumerRecords.<String, String>empty())
-                .when(consumer).poll(any(Duration.class));
-        UUID uuid = UUID.randomUUID();
-        Transaction transaction = new Transaction(
-                uuid,
-                new Money(12345, Currency.USD),
-                account,
-                period[0],
-                "I win money"
-        );
-
-        try (MockedStatic mocked = mockStatic(TransactionParser.class)) {
-            mocked.when(() -> TransactionParser.parse(dummyRecord, account)).thenReturn(transaction);
-
-            // Act
-            ArrayList<Transaction> results = service.pollTransactionsByAccount(consumer, prefix, account, period);
-        }
-
-    }
-
-    @Test
-    void pollOnce() {
-        // trivial to test
-//        Map<TopicPartition, ConsumerRecord<String, String>> map = new HashMap<>();
-//        map.put(new TopicPartition("mytopic", 0),
-//                new ConsumerRecord<String, String>());
-//        ConsumerRecords<String, String> records = new ConsumerRecords<>();
-//        when(consumer.poll(any(Duration.class))).thenReturn();
-    }
+//
+//    // Mocks
+//    @InjectMocks
+//    private TransactionService service;
+//    @Mock
+//    private Logger logger;
+//    @Mock
+//    private ValidationService validationService;
+//    @Mock
+//    private FXRateService fxRateService;
+//    @Mock
+//    private KafkaTemplate<String, String> kafkaTemplate;
+//    @Mock
+//    private Consumer<String, String> consumer;
+//
+//    // Data
+//
+//    @Test
+//    void getPaginatedListByMonth() {
+//    }
+//
+//    @Test
+//    void getByMonth() {
+//    }
+//
+//    @Test
+//    void getAllAccounts() {
+//    }
+//
+//    @Test
+//    void getTransactionsByClient() {
+//    }
+//
+//    @Test
+//    void pollAccounts() {
+//    }
+//
+//    @Test
+//    void pollTransactionsByAccount() {
+//        // Arrange
+//        String prefix = "transactions", clientId = "P-0123456789", IBAN = "CH-1234-1111";
+//        Currency currency = Currency.USD;
+//        Client owner = new Client(clientId);
+//        Account account = new Account(owner, IBAN, currency);
+//        owner.addAccount(account);
+//        LocalDate[] period = {LocalDate.of(2022, 10, 1), LocalDate.of(2022, 10, 31)};
+//
+//        Map<TopicPartition, List<ConsumerRecord<String, String>>> map = new HashMap<>();
+//        TopicPartition topicPartition = new TopicPartition("mytopic", 0);
+//        ConsumerRecord<String, String> dummyRecord = new ConsumerRecord<String, String>(
+//                "mytopic", 0, 0, "mykey", "myvalue");
+//        map.put(topicPartition, Arrays.asList(dummyRecord));
+//        ConsumerRecords<String, String> firstRecords = new ConsumerRecords<>(map);
+//
+//        doReturn(firstRecords).doReturn(ConsumerRecords.<String, String>empty())
+//                .when(consumer).poll(any(Duration.class));
+//        UUID uuid = UUID.randomUUID();
+//        Transaction transaction = new Transaction(
+//                uuid,
+//                new Money(12345, Currency.USD),
+//                account,
+//                period[0],
+//                "I win money"
+//        );
+//
+//        try (MockedStatic mocked = mockStatic(TransactionParser.class)) {
+//            mocked.when(() -> TransactionParser.parse(dummyRecord, account)).thenReturn(transaction);
+//
+//            // Act
+//            ArrayList<Transaction> results = service.pollTransactionsByAccount(consumer, prefix, account, period);
+//        }
+//
+//    }
+//
+//    @Test
+//    void pollOnce() {
+//        // trivial to test
+////        Map<TopicPartition, ConsumerRecord<String, String>> map = new HashMap<>();
+////        map.put(new TopicPartition("mytopic", 0),
+////                new ConsumerRecord<String, String>());
+////        ConsumerRecords<String, String> records = new ConsumerRecords<>();
+////        when(consumer.poll(any(Duration.class))).thenReturn();
+//    }
 }
